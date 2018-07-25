@@ -1,17 +1,33 @@
 <template>
   <v-layout column>
-    <v-text-field
-      label="Search"
-      solo
-      @blur="mode='search'; doSearch()"
-      v-model="term"
-      ></v-text-field>
     <v-layout fluid row>
-      <v-btn @click="mode = 'top'; doSearch()">Top</v-btn>
-      <v-btn @click="mode = 'plays'; doSearch()">Plays</v-btn>
-      <v-btn @click="mode = 'new'; doSearch()">New</v-btn>
-      <v-btn @click="downloadAll()" v-if="mode === 'search'" :loading="downloadingAll">Download All</v-btn>
+      <v-btn color="secondary" @click="changeMode('top')">Top</v-btn>
+      <v-btn color="secondary" @click="changeMode('plays')">Plays</v-btn>
+      <v-btn color="secondary" @click="changeMode('new')">New</v-btn>
+      <v-btn color="secondary" @click="downloadAll()" v-if="mode === 'search'" :loading="downloadingAll">Download All</v-btn>
     </v-layout>
+    <v-flex xs12>
+      <v-layout row>
+        <v-flex xs4 md3 class="ma-2">
+          <v-select
+            label="Field"
+            solo
+            :items="searchFields"
+            item-text="label"
+            item-value="key"
+            v-model="searchField"
+          ></v-select>
+        </v-flex>
+        <v-flex xs8 md9 class="ma-2">
+          <v-text-field
+            label="Search"
+            solo
+            @keyup.enter="changeMode('search')"
+            v-model="searchTerm"
+          ></v-text-field>
+        </v-flex>
+      </v-layout>
+    </v-flex>
     <v-pagination v-if="pages" v-model="page" :length="pages" @input="doSearch"></v-pagination>
     <v-container fluid grid-list-lg>
       <v-layout row wrap>
@@ -30,6 +46,7 @@ import songCard from '~/components/songCard.vue'
 const PAGE_LENGTH = 15
 
 export default {
+  middleware: 'config',
   components: {
     songCard
   },
@@ -40,11 +57,20 @@ export default {
     return {
       songs: [],
       type: 'name',
-      term: '',
       total: 1,
       page: 1,
       mode: 'search',
-      downloadingAll: false
+      downloadingAll: false,
+      searchField: 'name',
+      searchTerm: '',
+      searchFields: [
+        { key: 'name', label: 'Name' },
+        { key: 'songName', label: 'Song Name' },
+        { key: 'songSubName', label: 'Song Sub Name' },
+        { key: 'authorName', label: 'Author' },
+        { key: 'uploader', label: 'Uploader' },
+        { key: 'description', label: 'Description' }
+      ]
     }
   },
   created () {
@@ -52,9 +78,9 @@ export default {
     this.doSearch()
   },
   computed: {
-    ...mapState({ existingSongs: 'songs' }),
+    ...mapState([ 'index' ]),
     pages () {
-      if (this.total > this.songs.length) {
+      if (this.songs.length && this.total > this.songs.length) {
         return Math.ceil(this.total / PAGE_LENGTH)
       } else {
         return 0
@@ -66,7 +92,7 @@ export default {
     async downloadAll() {
       this.downloadingAll = true
       const ps = this.songs.map(async song => {
-        if (!this.existingSongs.includes(song.key)) {
+        if (!this.index.includes(song.key)) {
           try {
             await this.downloadSong(song)
           } catch (e) {}
@@ -75,6 +101,11 @@ export default {
       await Promise.all(ps)
       this.downloadingAll = false
     },
+    async changeMode(mode) {
+      this.mode = mode
+      this.page = 1
+      return this.doSearch()
+    },
     async doSearch () {
       const start = Math.max(0, (this.page - 1) * PAGE_LENGTH)
       const fns = {
@@ -82,8 +113,8 @@ export default {
         new: () => this.$bsapi.byNew(start),
         plays: () => this.$bsapi.byPlays(start),
         search: async () => {
-          if (this.term.includes('https')) {
-            const urls = this.term.split(' ')
+          if (this.searchTerm.includes('https')) {
+            const urls = this.searchTerm.split(' ')
             const keys = urls.map(u => u.split('/').slice(-1)[0])
             const ps = keys.map(this.$bsapi.detail)
             const responses = await Promise.all(ps)
@@ -92,7 +123,7 @@ export default {
             console.log(urls, keys, songs)
             return { total, songs }
           }
-          return this.$bsapi.search(this.type, this.term, start)
+          return this.$bsapi.search(this.searchField, this.searchTerm, start)
         }
       }
       const { songs, total } = await fns[this.mode]()

@@ -12,13 +12,15 @@ const mkdir = util.promisify(fs.mkdir)
 const readdir = util.promisify(fs.readdir)
 const rm = util.promisify(rimraf)
 
-const config = JSON.parse(fs.readFileSync('config.json', 'utf8'))
 
 export default {
-  songs: [],
-  customSongsDir: path.join(config.beatSaberDir, 'CustomSongs'),
+  songs: {},
+  beatSaberDir: '',
+  get customSongsDir() {
+    return path.join(this.beatSaberDir, 'CustomSongs')
+  },
   async songDir(song) {
-    const dirname = `[${song.key}] ${song.songName}`.replace(/[\/\\]/g, '')
+    const dirname = song.dir || `[${song.key}] ${song.name}`.replace(/[^\w\\\/()\[\]_ -]/g, '')
     return path.join(this.customSongsDir, dirname)
   },
   async downloadSong(song) {
@@ -50,12 +52,35 @@ export default {
   },
   async removeSong (song) {
     const dirname = await this.songDir(song)
+    console.log(`rm ${dirname}`)
     await rm(dirname)
   },
   async getSongs () {
     const dirs = await readdir(this.customSongsDir)
-    const keys = dirs.map(d => d.match(/^\[(.+?)\]/)[1])
-    return keys
+    const songs = []
+    for (const dir of dirs) {
+      const dirname = path.join(this.customSongsDir, dir)
+      try {      
+        const jsonPath = path.join(dirname, 'beatManager.json')
+        const song = JSON.parse(await readFile(jsonPath))
+        song.dir = dir
+        songs.push(song)
+      } catch (e) {
+        try {
+          console.error(`Cannot load beatManager.json for song: ${dir}`, e)
+          const jsonPath = path.join(dirname, 'info.json')
+          const song = JSON.parse(await readFile(jsonPath))
+          const coverImage = (await readdir(dirname)).find(f => f.toLowerCase() === song.coverImagePath.toLowerCase())
+          song.dir = dir
+          song.coverUrl = 'data:image/jpeg;base64,' + (await readFile(path.join(dirname, coverImage))).toString('base64')
+          song.basic = true
+          songs.push(song)
+        } catch (e) {
+          console.error(`Cannot load info.json for song: ${dir}`, e)
+        }
+      }
+    }
+    return songs
   },
   songExists(song) {
     return this.songs.includes(song.key)

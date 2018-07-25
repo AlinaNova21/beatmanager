@@ -28,7 +28,8 @@
       ></v-card-media>
     <v-card-title>
       <div>
-        <div class="headline">{{ song.songName }}</div>
+        <div class="headline">{{ song.name }}</div>
+        <div>{{ song.songName }}</div>
         <div>{{ song.songSubName }}</div>
         <div>{{ song.authorName }}</div>
         <div>
@@ -43,7 +44,29 @@
       <v-spacer></v-spacer>
       <v-btn flat v-if="!exists" @click="download()" :loading="active">Download</v-btn>
       <v-btn flat v-if="exists" disabled>In Library</v-btn>
-      <v-btn flat v-if="exists"  @click="remove()" :loading="active">Remove</v-btn>
+      <v-dialog v-if="exists" v-model="confirmDelete" max-width="400px">
+        <v-btn slot="activator" flat>Remove</v-btn>
+        <v-card>
+          <v-card-title class="headline">Remove Song</v-card-title>
+          <v-card-text>
+            <div>Are you sure you wish to delete this song?</div>
+            <v-layout row fluid>
+              <img :src="song.coverUrl" width="100px" height="100px">
+              <v-layout column class="pl-1">
+                <div class="headline">{{ song.name }}</div>
+                <div>{{ song.songName }}</div>
+                <div>{{ song.songSubName }}</div>
+                <div>{{ song.authorName }}</div>
+              </v-layout>
+            </v-layout>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn flat @click="confirmDelete = false">Cancel</v-btn>
+            <v-btn flat color="red" @click="remove();confirmDelete = false">Delete</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-card-actions>
   </v-card>
 </template>
@@ -53,13 +76,14 @@ export default {
   props: ['song'],
   data() {
     return {
-      active: false
+      active: false,
+      confirmDelete: false
     }
   },
   computed: {
-    ...mapState(['songs']),
+    ...mapState(['index']),
     exists () {
-      return this.songs.includes(this.song.key)
+      return this.index.includes(this.song.key)
     },
     difficulties () {
       return Object.keys(this.song.difficulties)

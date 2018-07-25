@@ -7,9 +7,11 @@
       ></v-text-field>
     <v-container fluid grid-list-lg>
       <v-layout row wrap>
-        <v-flex xs6 md3 v-for="song in filteredSongs" :key="song.key">
-          <song-card :song="song"></song-card>
-        </v-flex>
+        <v-slide-y-transition  v-for="song in filteredSongs" :key="song.key">
+          <v-flex xs6 md3>
+            <song-card :song="song"></song-card>
+          </v-flex>
+        </v-slide-y-transition>
         <div class="headline" v-if="!filteredSongs.length">No Songs</div>
       </v-layout>
     </v-container>
@@ -30,31 +32,23 @@ export default {
   },
   data() {
     return {
-      songs: [],
       cache: {},
       filter: ''
     }
   },
   created () {
-    this.doSearch()
   },
   computed: {
-    ...mapState({ songKeys: 'songs' }),
+    ...mapState(['songs','index']),
     filteredSongs () {
       return this.songs.filter(s => {
-        if (!this.songKeys.includes(s.key)) return false
-        return s.songName.toLowerCase().includes(this.filter.toLowerCase())
+        if (!this.index.includes(s.key)) return false
+        const str = [s.name, s.authorName, s.songName, s.songSubName, s.uploader].join(' ').toLowerCase()
+        return str.includes(this.filter.toLowerCase())
       })
     }    
   },
   methods: {
-    async doSearch () {
-      this.songs.splice(0,this.songs.length)
-      for (const key of this.songKeys) {
-        const { song } = await this.$bsapi.detail(key)
-        this.songs.push(song)
-      }
-    }
   }
 }
 </script>
