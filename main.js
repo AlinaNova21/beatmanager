@@ -1,6 +1,8 @@
 /*
 **  Nuxt
 */
+const { autoUpdater } = require("electron-updater")
+autoUpdater.checkForUpdatesAndNotify()
 const http = require('http')
 const { Nuxt, Builder } = require('nuxt')
 let config = require('./nuxt.config.js')

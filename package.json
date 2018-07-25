@@ -1,10 +1,10 @@
 {
   "name": "beatmanager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Manager for BeatSaber songs",
   "author": "Adam Shumann <ashumann13@gmail.com>",
   "private": true,
-  "license":"MIT",
+  "license": "MIT",
   "main": "main.js",
   "build": {
     "appId": "com.ags131.beatmanager",
@@ -19,10 +19,11 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=DEV electron .",
     "build": "nuxt build && electron-builder",
-    "release": "build"
+    "release": "build -w"
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "electron-updater": "^3.0.3",
     "jszip": "^3.1.5",
     "nuxt": "^1.4.0",
     "rimraf": "^2.6.2",
