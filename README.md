@@ -1,4 +1,4 @@
-# beatmanager
+# Beat Manager
 
 > Manager for BeatSaber songs
 
