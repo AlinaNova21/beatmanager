@@ -1,6 +1,6 @@
 {
   "name": "beatmanager",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "Manager for BeatSaber songs",
   "author": "Adam Shumann <ashumann13@gmail.com>",
   "private": true,
@@ -9,19 +9,23 @@
     "appId": "com.ags131.beatmanager",
     "directories": {
       "buildResources": "static"
+    },
+    "publish": {
+      "provider": "github",
+      "publishAutoUpdate": true
     }
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=DEV electron .",
-    "build": "nuxt build && electron-builder"
+    "build": "nuxt build && electron-builder",
+    "release": "build"
   },
   "dependencies": {
     "axios": "^0.18.0",
     "jszip": "^3.1.5",
     "nuxt": "^1.4.0",
     "rimraf": "^2.6.2",
-    "vuetify": "^1.1.8",
-    "vuex-persist": "^1.4.3"
+    "vuetify": "^1.1.8"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",
