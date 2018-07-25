@@ -61,15 +61,14 @@ export default {
       page: 1,
       mode: 'search',
       downloadingAll: false,
-      searchField: 'name',
+      searchField: 'all',
       searchTerm: '',
       searchFields: [
         { key: 'name', label: 'Name' },
-        { key: 'songName', label: 'Song Name' },
-        { key: 'songSubName', label: 'Song Sub Name' },
-        { key: 'authorName', label: 'Author' },
-        { key: 'uploader', label: 'Uploader' },
-        { key: 'description', label: 'Description' }
+        { key: 'song', label: 'Song' },
+        { key: 'author', label: 'Author' },
+        { key: 'user', label: 'User' },
+        { key: 'all', label: 'All' }
       ]
     }
   },
