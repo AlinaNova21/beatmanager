@@ -4,6 +4,12 @@
 
 ![Image](https://github.com/ags131/beatmanager/raw/master/docs/screenshot1.png)
 
+## Info
+
+This tool manages and downloads songs for Beat Saber using beatsaver.com's api.
+It extracts songs directly to your Beat Saber directory.
+
+
 ## Installation
 
 Download the release from GitHub releases and install
