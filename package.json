@@ -4,6 +4,7 @@
   "description": "Manager for BeatSaber songs",
   "author": "Adam Shumann <ashumann13@gmail.com>",
   "private": true,
+  "license":"MIT",
   "main": "main.js",
   "build": {
     "appId": "com.ags131.beatmanager",
