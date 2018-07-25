@@ -1,6 +1,5 @@
 <template>
 	<v-app dark>
-    <v-navigation-drawer app></v-navigation-drawer>
     <v-toolbar app>
       <v-toolbar-title>Beat Manager</v-toolbar-title>
       <v-spacer></v-spacer>
