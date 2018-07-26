@@ -2,10 +2,33 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import api from '~/api'
 import VuexPersistence from 'vuex-persist'
+import fs from 'fs'
+import util from 'util'
+import path from 'path'
+import { remote } from 'electron'
+
+const readFile = util.promisify(fs.readFile)
+const writeFile = util.promisify(fs.writeFile)
+
+const BASE_DIR = remote.app.getPath('userData')
 
 const vuexLocal = new VuexPersistence({
-  storage: window.localStorage,
-  reducer: ({ config }) => ({ config })
+  // storage: window.localStorage,
+  reducer: ({ config }) => ({ config }),
+  async restoreState (key, storage) {
+    const configPath = path.join(BASE_DIR, `${key}.json`)
+    try {
+      const contents = await readFile(configPath, 'utf8')
+      return JSON.parse(contents)
+    } catch (e) {
+      return {}
+    }
+  },
+  async saveState (key, state, storage) {
+    const configPath = path.join(BASE_DIR, `${key}.json`)
+    return writeFile(configPath, JSON.stringify(state))
+  },
+  asyncStorage: true
 })
 
 export default () => {
