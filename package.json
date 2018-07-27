@@ -7,6 +7,10 @@
   "license": "MIT",
   "main": "main.js",
   "build": {
+    "files": [
+      { "from": ".", "filter": ["package.json"] },
+      { "from": "out" }
+    ],
     "appId": "com.ags131.beatmanager",
     "directories": {
       "buildResources": "static"
@@ -18,19 +22,19 @@
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=DEV electron .",
-    "build": "nuxt build && electron-builder",
-    "release": "nuxt build && electron-builder -w"
+    "build": "nuxt generate && electron-builder",
+    "release": "nuxt generate && electron-builder -w"
   },
   "dependencies": {
+  },
+  "devDependencies": {
     "axios": "^0.18.0",
     "electron-updater": "^3.0.3",
     "jszip": "^3.1.5",
-    "nuxt": "^1.4.0",
     "rimraf": "^2.6.2",
     "vuetify": "^1.1.8",
-    "vuex-persist": "^1.4.3"
-  },
-  "devDependencies": {
+    "vuex-persist": "^1.4.3",
+    "nuxt": "^1.4.0",
     "babel-eslint": "^8.2.1",
     "cross-env": "^5.1.4",
     "electron": "2.0.0-beta.7",

@@ -5,7 +5,7 @@
       <v-spacer></v-spacer>
       <v-btn flat to="BeatSaver">Beat Saver</v-btn>
       <v-btn flat to="Library">My Library</v-btn>
-      <v-btn flat icon to="config"><v-icon>settings</v-icon></v-btn>
+      <v-btn flat icon to="Config"><v-icon>settings</v-icon></v-btn>
     </v-toolbar>
     <v-content>
       <v-container fluid>

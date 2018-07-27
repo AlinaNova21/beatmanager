@@ -1,7 +1,7 @@
 <script>
 export default {
 	fetch ({ redirect }) {
-		redirect('/library')
+		redirect('/Library')
 	}
 }
 </script>

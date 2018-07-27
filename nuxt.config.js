@@ -20,6 +20,9 @@ module.exports = {
   vendor: [
     '~/plugins/vuetify.js'
   ],
+  generate: {
+  	dir: 'out'
+  },
 	build: {
 		extend (config, { isDev, isClient }) {
 			if (isDev && isClient) {
