@@ -1,6 +1,6 @@
 {
   "name": "beatmanager",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Manager for BeatSaber songs",
   "author": "Adam Shumann <ashumann13@gmail.com>",
   "private": true,
@@ -19,7 +19,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=DEV electron .",
     "build": "nuxt build && electron-builder",
-    "release": "build -w"
+    "release": "nuxt build && electron-builder -w"
   },
   "dependencies": {
     "axios": "^0.18.0",
