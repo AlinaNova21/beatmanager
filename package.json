@@ -1,6 +1,6 @@
 {
   "name": "beatmanager",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Manager for BeatSaber songs",
   "author": "Adam Shumann <ashumann13@gmail.com>",
   "private": true,
