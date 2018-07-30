@@ -20,7 +20,7 @@ export default {
     return path.join(this.beatSaberDir, 'CustomSongs')
   },
   async songDir(song) {
-    const dirname = song.dir || `[${song.key}] ${song.name}`.replace(/[^\w\\\/()\[\]_ -]/g, '')
+    const dirname = song.dir || `[${song.key}] ${song.name}`.replace(/[^\w()\[\]_ -]/g, '')
     return path.join(this.customSongsDir, dirname)
   },
   async downloadSong(song) {
