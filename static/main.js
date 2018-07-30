@@ -1,5 +1,5 @@
-const { autoUpdater } = require("electron-updater")
-autoUpdater.checkForUpdatesAndNotify()
+// const { autoUpdater } = require("electron-updater")
+// autoUpdater.checkForUpdatesAndNotify()
 const _NUXT_URL_ = `app://beatmanager/`
 
 /*
