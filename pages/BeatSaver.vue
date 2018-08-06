@@ -127,7 +127,7 @@ export default {
       }
       const { songs, total } = await fns[this.mode]()
       this.total = total
-      this.songs.splice(0, this.songs.length, ...songs)
+      this.songs.splice(0, this.songs.length, ...Object.values(songs))
     }
   }
 }
