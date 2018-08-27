@@ -5,7 +5,8 @@
     </v-list-tile-avatar>
     <v-list-tile-content>
       <v-list-tile-title v-html="song.songName"></v-list-tile-title>
-      <v-list-tile-sub-title v-html="song.songSubName || song.authorName"></v-list-tile-sub-title>      
+      <v-list-tile-sub-title v-html="song.songSubName" class="text--primary"></v-list-tile-sub-title>
+      <v-list-tile-sub-title v-html="difficulties"></v-list-tile-sub-title>
     </v-list-tile-content>
     <v-list-tile-action>
       <v-btn icon ripple v-if="!exists" @click="download()" :loading="active">
@@ -55,7 +56,9 @@ export default {
       return this.index.includes(this.song.key)
     },
     difficulties () {
-      return Object.keys(this.song.difficulties)
+      const ret = Object.keys(this.song.difficulties)
+      ret.reverse()
+      return ret.join(' - ')
     }
   },
   methods: {

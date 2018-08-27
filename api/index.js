@@ -19,6 +19,9 @@ export default {
   get customSongsDir() {
     return path.join(this.beatSaberDir, 'CustomSongs')
   },
+  get playlistDir() {
+    return path.join(this.beatSaberDir, 'Playlists')
+  },
   async songDir(song) {
     const dirname = song.dir || `[${song.key}] ${song.name}`.replace(/[^\w()\[\]_ -]/g, '')
     return path.join(this.customSongsDir, dirname)
@@ -82,7 +85,55 @@ export default {
     }
     return songs
   },
+  async getPlaylists () {
+    const files = await readdir(this.playlistDir)
+    const playlists = []
+    for (const file of files) {
+      if (path.extname(file) !== '.json') continue
+      try {
+        const filePath = path.join(this.playlistDir, file)
+        const playlist = JSON.parse(await readFile(filePath))
+        playlist.fileLoc = filePath
+        playlists.push(playlist)
+      } catch (e) {
+        console.error(`Invalid playlist ${file}`)
+      }
+    }
+    return playlists
+  },
+  async savePlaylist (playlist) {
+    await writeFile(playlist.fileLoc, JSON.stringify(playlist))
+  },
+  async newPlaylist (title, author) {
+    const filename = `${title.replace(/[^\w()\[\]_ -]/g, '')}.json`
+    const playlist = {
+      playlistTitle: title,
+      playlistAuthor: author,
+      image: '',
+      songs: [],
+      fileLoc: path.join(this.playlistDir, filename)
+    }
+    await this.savePlaylist(playlist)
+    return playlist
+  },
+  async playlistAddSong (playlist, song) {
+    playlist = Object.assign({}, playlist)
+    const key = song.dir
+    const songName = `${song.songName} ${song.songSubName}`
+    if (!playlist.songs.find(s => s.key === key)) {
+      playlist.songs = [...playlist.songs, { key, songName }]
+    }
+    await this.savePlaylist(playlist)
+    return playlist
+  },
+  async playlistRemoveSong (playlist, song) {
+    playlist = Object.assign({}, playlist)
+    playlist.songs = playlist.songs.filter(s => s.key !== song.dir)
+    await this.savePlaylist(playlist)
+    return playlist
+  },
   songExists(song) {
     return this.songs.includes(song.key)
   }
 }
+

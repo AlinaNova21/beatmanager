@@ -41,7 +41,7 @@ export default {
     return {
       cache: {},
       filter: '',
-      viewMode: 'grid'
+      viewMode: 'list'
     }
   },
   created () {

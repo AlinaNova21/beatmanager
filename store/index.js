@@ -37,25 +37,44 @@ export default () => {
     state: {
       index: [],
       songs: [],
+      playlists: [],
       config: {}
     },
     mutations: {
-      UPDATE_SONGS: function (state, songs) {
+      UPDATE_SONGS (state, songs) {
         state.songs = songs
         state.index = songs.map(s => s.key)
       },
-      ADD_SONG: function (state, song) {
+      ADD_SONG (state, song) {
         state.songs.push(song)
         state.index.push(song.key)
       },
-      REMOVE_SONG: function (state, song) {
+      REMOVE_SONG (state, song) {
         const index = state.index.indexOf(song.key)
         if (index > -1) {
           state.index.splice(index, 1)
         }
       },
-      UPDATE_CONFIG: function (state, config) {
+      UPDATE_CONFIG (state, config) {
         state.config = config
+      },
+      UPDATE_PLAYLISTS (state, playlists) {
+        state.playlists = playlists
+      },
+      ADD_PLAYLIST (state, playlist) {
+        state.playlists.push(playlist)
+      },
+      REMOVE_PLAYLIST (state, playlist) {
+        const index = state.playlists.findIndex(p => p.key === playlist.key)
+        if (index > -1) {
+          state.playlists.splice(index, 1)
+        }
+      },
+      UPDATE_PLAYLIST (state, playlist) {
+        const index = state.playlists.findIndex(p => p.key === playlist.key)
+        if (index > -1) {
+          state.playlists.splice(index, 1, playlist)
+        }
       }
     },
     actions: {
@@ -63,6 +82,7 @@ export default () => {
         if (!state.config.beatSaberDir) return
         api.beatSaberDir = state.config.beatSaberDir
         commit('UPDATE_SONGS', await api.getSongs())
+        commit('UPDATE_PLAYLISTS', await api.getPlaylists())
       },
       async downloadSong ({ commit }, song) {
         await api.downloadSong(song)
@@ -74,6 +94,15 @@ export default () => {
       },
       async saveConfig ({ commit }, config) {
         commit('UPDATE_CONFIG', config)
+      },
+      async newPlaylist ({ commit }, { title, author }) {
+        commit('ADD_PLAYLIST', await api.newPlaylist(title, author))
+      },
+      async playlistAddSong ({ commit }, playlist, song) {
+        commit('UPDATE_PLAYLIST', await api.playlistAddSong(playlist, song))
+      },
+      async playlistRemoveSong ({ commit }, playlist, song) {
+        commit('UPDATE_PLAYLIST', await api.playlistRemoveSong(playlist, song))
       }
     }
   })
