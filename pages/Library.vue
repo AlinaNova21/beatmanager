@@ -1,31 +1,38 @@
 <template>
   <v-layout column>
-    <v-text-field
-      label="Filter"
-      solo
-      v-model="filter"
-      ></v-text-field>
-    <v-container fluid grid-list-lg>
-      <v-layout row wrap>
-        <v-slide-y-transition  v-for="song in filteredSongs" :key="song.key">
-          <v-flex xs6 md3>
-            <song-card :song="song"></song-card>
-          </v-flex>
-        </v-slide-y-transition>
-        <div class="headline" v-if="!filteredSongs.length">No Songs</div>
-      </v-layout>
-    </v-container>
+    <v-layout row>
+      <v-spacer></v-spacer>
+      <v-flex md8>
+        <v-text-field
+          label="Filter"
+          solo
+          v-model="filter"
+          ></v-text-field>
+      </v-flex>
+      <v-flex md1 class="py-1 px-2">
+        <v-btn-toggle v-model="viewMode" mandatory>
+          <v-btn flat icon value="list">
+            <v-icon>view_list</v-icon>
+          </v-btn>
+          <v-btn flat icon value="grid">
+            <v-icon>view_module</v-icon>
+          </v-btn>
+        </v-btn-toggle>
+      </v-flex>
+      <v-spacer></v-spacer>
+    </v-layout>
+    <songList :songs="filteredSongs" :viewMode="viewMode"></songList>
   </v-layout>
 </template>
 <script type="text/javascript">
 import { mapState, mapActions } from 'vuex'
-import songCard from '~/components/songCard.vue'
+import songList from '~/components/songList.vue'
 
 const PAGE_LENGTH = 15
 
 export default {
   components: {
-    songCard
+    songList
   },
   async fetch({ store, params }) {
     await store.dispatch('sync')
@@ -33,7 +40,8 @@ export default {
   data() {
     return {
       cache: {},
-      filter: ''
+      filter: '',
+      viewMode: 'grid'
     }
   },
   created () {

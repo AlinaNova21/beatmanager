@@ -5,6 +5,17 @@
       <v-btn color="secondary" @click="changeMode('plays')">Plays</v-btn>
       <v-btn color="secondary" @click="changeMode('new')">New</v-btn>
       <v-btn color="secondary" @click="downloadAll()" v-if="mode === 'search'" :loading="downloadingAll">Download All</v-btn>
+      <v-spacer></v-spacer>
+      <v-flex md1 class="py-1 px-2">
+        <v-btn-toggle v-model="viewMode" mandatory>
+          <v-btn flat icon value="list">
+            <v-icon>view_list</v-icon>
+          </v-btn>
+          <v-btn flat icon value="grid">
+            <v-icon>view_module</v-icon>
+          </v-btn>
+        </v-btn-toggle>
+      </v-flex>
     </v-layout>
     <v-flex xs12>
       <v-layout row>
@@ -29,32 +40,27 @@
       </v-layout>
     </v-flex>
     <v-pagination v-if="pages" v-model="page" :length="pages" @input="doSearch"></v-pagination>
-    <v-container fluid grid-list-lg>
-      <v-layout row wrap>
-        <v-flex xs6 md3 v-for="song in songs" :key="song.key">
-          <song-card :song="song"></song-card>
-        </v-flex>
-      </v-layout>
-    </v-container>
+    <songList :songs="songs" :viewMode="viewMode"></songList>
     <v-pagination v-if="pages" v-model="page" :length="pages" @input="doSearch"></v-pagination>
   </v-layout>
 </template>
 <script type="text/javascript">
 import { mapState, mapActions } from 'vuex'
-import songCard from '~/components/songCard.vue'
+import songList from '~/components/songList.vue'
 
 const PAGE_LENGTH = 15
 
 export default {
   middleware: 'config',
   components: {
-    songCard
+    songList
   },
   async fetch({ store, params }) {
     await store.dispatch('sync')
   },
   data() {
     return {
+      viewMode: 'list',
       songs: [],
       type: 'name',
       total: 1,
